@@ -1,8 +1,6 @@
-const {clientId} = require('../config.json');
-
 module.exports.sendMessage = function (interaction, message) {
     const channel = interaction.channel;
-    let user = client.users.cache.find(user => user.id === clientId);
+    let user = client.users.cache.find(user => user.id === process.env.CLIENT_ID);
     console.log(user.username + ': ' + message);
     channel.send(message);
 }
