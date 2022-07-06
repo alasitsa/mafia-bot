@@ -1,0 +1,8 @@
+{
+  "waitingMsg": ["Waiting for players, room id: {0}", "Ожидание игроков, room id: {0}"],
+  "readyTimeLeftMsg": ["Time left {0} seconds, room id: {1}", "Осталось {0} секунд, room id: {1}"],
+  "startedMsg": ["Started with {0} players, room id: {1}", "Игра началась с {0} игроками, room id: {1}"],
+  "notEnoughPlayersMsg": ["Only {0} players, need {1} to start, room id: {2}", "Недостаточно игроков: {0} готовы, минимум {1} требуется, room id: {2}"],
+  "playerAdded": ["You are now in room {0}", "Теперь вы в комнате {0}"],
+  "playerNotAdded": ["You cannot be added to room {0}", "Проблема с добавлением в комнату {0}"]
+}
