@@ -5,6 +5,8 @@ npm install discord.js @discordjs/rest discord-api-types
 ***
 npm install discord.js @discordjs/builders
 ***
+npm install dotenv
+***
 node deploy-commands.js
 ***
 node index.js

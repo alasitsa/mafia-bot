@@ -1,6 +1,9 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, Intents } = require('discord.js');
+const { Client, Collection, Intents, CommandInteraction} = require('discord.js');
+const {formatErrorMessage} = require("./functions/messages");
+require('dotenv').config();
+const commands = require('./commands.json');
 
 global.client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 global.rooms = [];
@@ -28,8 +31,9 @@ client.on('interactionCreate', async interaction => {
 
     try {
         await command.execute(interaction);
+        interaction.reply((commands[interaction.commandName])[0]);
     } catch (error) {
-        console.error(error);
+        console.error(formatErrorMessage(error));
         await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
     }
 });

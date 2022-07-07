@@ -1,0 +1,6 @@
+{
+  "start": ["Starts mafia game", "Начинает игру в мафию"],
+  "intend": ["Intend in mafia game", "Присоедениться к игре в мафию"],
+  "players": ["Show players in room", "Показать игроков в комнате"],
+  "ping": ["pong", "pong"]
+}

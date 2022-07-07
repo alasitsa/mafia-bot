@@ -1,11 +1,13 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const {getInteractionMessage, sendMessage} = require("../functions/messages");
-const {addPlayer, isGameStarted} = require("../functions/general");
+const {addPlayer, isGameStarted, getStringLocale, formatString} = require("../functions/general");
+const { intend } = require('../commands.json');
+const { playerAdded, playerNotAdded } = require('../messages.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('intend')
-        .setDescription('intending to room')
+        .setDescription(getStringLocale(intend))
         .addStringOption(option =>
             option.setName('room')
                 .setDescription('room id')
@@ -13,8 +15,10 @@ module.exports = {
     async execute(interaction) {
         getInteractionMessage(interaction, 'room');
         let roomId = interaction.options.getString('room');
-        if(!isGameStarted(roomId))
-            addPlayer(roomId, interaction.user);
-        sendMessage(interaction, 'msg');
+        if(!isGameStarted(roomId)) {
+            let msg = addPlayer(roomId, interaction.user) ? playerAdded : playerNotAdded;
+            sendMessage(interaction, formatString(getStringLocale(msg), roomId));
+        }
+
     },
 };
