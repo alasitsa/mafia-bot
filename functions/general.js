@@ -133,14 +133,12 @@ async function createChannels(roomId, channels) {
     //         room.genText = channel.id;
     //         channel.setParent(process.env.CATEGORY_ID);
     //     });
-    channels.create('gen-voice-' + roomId, {
+    const channel = await channels.create('gen-voice-' + roomId, {
         reason: 'Started mafia game ' + roomId,
         type: 'GUILD_VOICE'
     })
-        .then(channel => {
-            room.genVoice = channel.id;
-            channel.setParent(process.env.CATEGORY_ID);
-        });
+    room.genVoice = channel.id;
+    await channel.setParent(process.env.CATEGORY_ID);
 
     // channels.create('mafia-text-' + roomId, {reason: 'Started mafia game ' + roomId})
     //     .then(channel => {
