@@ -6,11 +6,14 @@ require('dotenv').config();
 module.exports.startRoom = async function (interaction, roomId, minPlayers) {
     let room = rooms.find(room => room.id === roomId);
     if (room.players.length >= (minPlayers ?? 4)) {
-        createChannels(roomId, interaction.guild.channels);
-        // console.log(room.players);
-        room.players.forEach(player =>
-            movePlayerToChannel(player.id, roomId, room.genVoice, process.env.GENERAL_CHANNEL_ID, interaction)
-        );
+        createChannels(roomId, interaction.guild.channels)
+            .then(created => {
+                if (!created) return;
+                console.log(rooms);
+                room.players.forEach(player =>
+                    movePlayerToChannel(player.id, roomId, room.genVoice, process.env.GENERAL_CHANNEL_ID, interaction));
+
+            });
         room.started = true;
         return true;
     }
@@ -120,16 +123,16 @@ function removePlayerFromAllRooms(user) {
     return true;
 }
 
-function createChannels(roomId, channels) {
+async function createChannels(roomId, channels) {
     let room = rooms.find(room => room.id === roomId);
     if (!room)
         return false;
 
-    channels.create('gen-text-' + roomId, {reason: 'Started mafia game ' + roomId})
-        .then(channel => {
-            room.genText = channel.id;
-            channel.setParent(process.env.CATEGORY_ID);
-        });
+    // channels.create('gen-text-' + roomId, {reason: 'Started mafia game ' + roomId})
+    //     .then(channel => {
+    //         room.genText = channel.id;
+    //         channel.setParent(process.env.CATEGORY_ID);
+    //     });
     channels.create('gen-voice-' + roomId, {
         reason: 'Started mafia game ' + roomId,
         type: 'GUILD_VOICE'
@@ -139,35 +142,46 @@ function createChannels(roomId, channels) {
             channel.setParent(process.env.CATEGORY_ID);
         });
 
-    channels.create('mafia-text-' + roomId, {reason: 'Started mafia game ' + roomId})
-        .then(channel => {
-            room.mafiaText = channel.id;
-            channel.setParent(process.env.CATEGORY_ID);
-        });
-    channels.create('mafia-voice-' + roomId, {
-        reason: 'Started mafia game ' + roomId,
-        type: 'GUILD_VOICE'
-    })
-        .then(channel => {
-            room.mafiaVoice = channel.id
-            channel.setParent(process.env.CATEGORY_ID);
-        });
-
+    // channels.create('mafia-text-' + roomId, {reason: 'Started mafia game ' + roomId})
+    //     .then(channel => {
+    //         room.mafiaText = channel.id;
+    //         channel.setParent(process.env.CATEGORY_ID);
+    //     });
+    // channels.create('mafia-voice-' + roomId, {
+    //     reason: 'Started mafia game ' + roomId,
+    //     type: 'GUILD_VOICE'
+    // })
+    //     .then(channel => {
+    //         room.mafiaVoice = channel.id
+    //         channel.setParent(process.env.CATEGORY_ID);
+    //     });
     return true;
 }
 
 function movePlayerToChannel(playerId, roomId, channelId, currChannelId, interaction) {
-    interaction.guild.channels.fetch(channelId)
-        .then(channel => {
-            console.log('\n\n\n' + interaction.guild.channels + '\n\n\n');
-            if (!channel) return;
-            interaction.guild.channels.fetch(currChannelId)
-                .then(currChannel => {
-                    if (!currChannel) return;
-                    let member = currChannel.members.find(player => playerId === player.user.id);
-                    console.log(member);
-                    if (!member) return;
-                    member.voice.setChannel(channel).then(r => console.log(r)); // TODO .then if member is not in currChannel send invite or smth
-                });
+    console.log(channelId);
+    interaction.guild.channels.fetch(currChannelId)
+        .then(currChannel => {
+            if (!currChannel) return;
+            let member = currChannel.members.find(player => playerId === player.user.id);
+            if (!member) return;
+            member.voice.setChannel(channelId).then(r => r); // TODO .then if member is not in currChannel send invite or smth
         });
+
+
+    // interaction.guild.channels.fetch(channelId)
+    //     .then(channel => {
+    //         // console.log('\n\n\n' + interaction.guild.channels + '\n\n\n');
+    //         if (!channel) return;
+    //         interaction.guild.channels.fetch(currChannelId)
+    //             .then(currChannel => {
+    //                 if (!currChannel) return;
+    //                 let member = currChannel.members.find(player => playerId === player.user.id);
+    //                 if (!member) return;
+    //                 member.voice.setChannel(channelId).then(r => console.log(r)); // TODO .then if member is not in currChannel send invite or smth
+    //                 // console.log(member.voiceStates);
+    //                 // member.voiceStates.channelID = channel.id;
+    //                 // member.setVoiceChannel(channel.id);
+    //             });
+    //     });
 }
